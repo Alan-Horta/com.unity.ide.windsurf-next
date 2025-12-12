@@ -14,7 +14,7 @@ using SimpleJSON;
 using IOPath = System.IO.Path;
 
 namespace Microsoft.Unity.VisualStudio.Editor {
-	internal class VisualStudioWindsurfInstallation : VisualStudioInstallation {
+	internal class VisualStudioWindsurfNextInstallation : VisualStudioInstallation {
 		private static readonly IGenerator _generator = new SdkStyleProjectGeneration();
 
 		public override bool SupportsAnalyzers {
@@ -57,11 +57,11 @@ namespace Microsoft.Unity.VisualStudio.Editor {
 
 		private static bool IsCandidateForDiscovery(string path) {
 #if UNITY_EDITOR_OSX
-			return Directory.Exists(path) && Regex.IsMatch(path, ".*Windsurf.*.app$", RegexOptions.IgnoreCase);
+			return Directory.Exists(path) && Regex.IsMatch(path, ".*Windsurf - Next.*.app$", RegexOptions.IgnoreCase);
 #elif UNITY_EDITOR_WIN
-			return File.Exists(path) && Regex.IsMatch(path, ".*Windsurf.*.exe$", RegexOptions.IgnoreCase);
+			return File.Exists(path) && Regex.IsMatch(path, ".*Windsurf - Next.*.exe$", RegexOptions.IgnoreCase);
 #else
-			return File.Exists(path) && path.EndsWith("windsurf", StringComparison.OrdinalIgnoreCase);
+			return File.Exists(path) && path.EndsWith("windsurf - next", StringComparison.OrdinalIgnoreCase);
 #endif
 		}
 
@@ -113,9 +113,9 @@ namespace Microsoft.Unity.VisualStudio.Editor {
 			}
 
 			isPrerelease = isPrerelease || editorPath.ToLower().Contains("insider");
-			installation = new VisualStudioWindsurfInstallation() {
+			installation = new VisualStudioWindsurfNextInstallation() {
 				IsPrerelease = isPrerelease,
-				Name = "Windsurf" + (isPrerelease ? " - Insider" : string.Empty) + (version != null ? $" [{version.ToString(3)}]" : string.Empty),
+				Name = "Windsurf - Next" + (isPrerelease ? " - Insider" : string.Empty) + (version != null ? $" [{version.ToString(3)}]" : string.Empty),
 				Path = editorPath,
 				Version = version ?? new Version()
 			};
@@ -131,16 +131,16 @@ namespace Microsoft.Unity.VisualStudio.Editor {
 			var programFiles = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 
 			foreach (var basePath in new[] { localAppPath, programFiles }) {
-				candidates.Add(IOPath.Combine(basePath, "windsurf", "windsurf.exe"));
+				candidates.Add(IOPath.Combine(basePath, "windsurf next", "windsurf - next.exe"));
 			}
 #elif UNITY_EDITOR_OSX
 			var appPath = IOPath.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-			candidates.AddRange(Directory.EnumerateDirectories(appPath, "Windsurf*.app"));
+			candidates.AddRange(Directory.EnumerateDirectories(appPath, "Windsurf - Next*.app"));
 #elif UNITY_EDITOR_LINUX
 			// Well known locations
-			candidates.Add("/usr/bin/windsurf");
-			candidates.Add("/bin/windsurf");
-			candidates.Add("/usr/local/bin/windsurf");
+			candidates.Add("/usr/bin/windsurf - next");
+			candidates.Add("/bin/windsurf - next");
+			candidates.Add("/usr/local/bin/windsurf - next");
 
 			// Preference ordered base directories relative to which desktop files should be searched
 			candidates.AddRange(GetXdgCandidates());
